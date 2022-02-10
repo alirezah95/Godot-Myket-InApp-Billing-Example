@@ -1,10 +1,11 @@
 extends Node2D
 
-
 #
 # This script is written as simple as possible. It is recommended to use 
 # dialoges to show user how the purchase went. 
 #
+onready var resPopup: Popup = $Control/ResPop
+onready var resLbl: Label = $Control/ResPop/ResPanel/ResVB/ResLbl
 
 var myketBilling: JNISingleton = null
 const SKU_PREMIUM = "myket_premium"
@@ -30,6 +31,8 @@ func _ready() -> void:
 
 func _on_Button_pressed() -> void:
 	if myketBilling == null:
+		resLbl.text = "InAppBilling plugin is not available for this device."
+		resPopup.show()
 		return
 	
 	myketBilling.startConnection()
@@ -38,7 +41,7 @@ func _on_Button_pressed() -> void:
 	
 
 
-func _on_MyketConnected(successful: bool) -> void:
+func _on_MyketConnected(successful: bool, resMsg: String) -> void:
 	print("Connected: ", str(successful))
 	
 	if successful:
@@ -48,6 +51,8 @@ func _on_MyketConnected(successful: bool) -> void:
 		# experience you should show a dialog indicating that there was an error
 		# in connection. This error can happen for either no internet connection
 		# or if Myket is not installed.
+		resLbl.text = resMsg
+		resPopup.show()
 		pass
 	
 	return
